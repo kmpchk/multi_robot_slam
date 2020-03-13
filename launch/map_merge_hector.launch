@@ -1,8 +1,8 @@
 <launch>
   <!-- Arguments -->
   <arg name="open_rviz" default="true"/>
-  <arg name="robot1_name" default="robot1_name"/>
-  <arg name="robot2_name" default="robot2_name"/>
+  <arg name="robot1_name" default="robot1"/>
+  <arg name="robot2_name" default="robot2"/>
 
   <arg name="first_robot_x_pos" default="300.0"/>
   <arg name="first_robot_y_pos" default="-140.0"/>
@@ -58,13 +58,18 @@
     <param name="robot_namespace" value="robot"/>
     <param name="merged_map_topic" value="map"/>
     <param name="world_frame" value="map"/>
-    <param name="known_init_poses" value="true"/>
+    <param name="known_init_poses" value="false"/>
     <param name="merging_rate" value="0.5"/>
     <param name="discovery_rate" value="0.5"/>
     <param name="estimation_rate" value="0.1"/>
     <param name="estimation_confidence" value="1.0"/>
   </node>
 
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find multi_robot_slam)/rviz/map_merge.rviz" output="screen"/>
+
+  <!--
+  <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg robot1_name)_tf_broadcaster" args="50 100 0 0 0 0 /map /$(arg robot1_name)/map 500"/>
+  <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg robot2_name)_tf_broadcaster" args="12 -8 0 0 0 0 /map /$(arg robot2_name)/map 500"/> -->
 
   <!--
   <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg robot1_name)_tf_broadcaster" args="4.8 7 0 1.57 0 0 /map /$(arg robot1_name)/map 1000"/>
