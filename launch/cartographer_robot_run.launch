@@ -1,0 +1,28 @@
+<launch>
+  <arg name="robot_name" value="$(env ROBOT_NAME)" />
+  <arg name="initial" default="" />	
+  <arg name="bag" default="" />
+
+  <arg name="initial_argument_expanded" value="-initial_pose '$(arg initial)'" if="$(eval arg('initial') != '')" />
+  <arg name="initial_argument_expanded" value="" if="$(eval arg('initial') == '')" />
+
+  <node name="cartographer_start_trajectory" pkg="cartographer_ros"
+      type="cartographer_start_trajectory" args="
+          -configuration_directory $(find husky_cartographer_navigation)/config
+          -configuration_basename decentralised_cartographer.lua
+	  $(arg initial_argument_expanded)"
+      output="screen">
+    <!--remap from="scan" to="$(arg robot_name)/laser/scan" /-->
+    <remap from="scan" to="$(arg robot_name)/scan" />
+    <remap from="imu" to="$(arg robot_name)/imu/data" />
+    <!-- <remap from="odom" to="$(arg robot_name)/odom" /> -->
+    <remap from="odom" to="$(arg robot_name)/odom" />
+  </node>
+
+  <node name="$(arg robot_name)_cartographer_occupancy_grid_node" pkg="cartographer_ros"
+      type="cartographer_occupancy_grid_node" args="-resolution 0.05" >
+    <remap from="map" to="$(arg robot_name)/map" />
+
+  </node>
+
+</launch>
