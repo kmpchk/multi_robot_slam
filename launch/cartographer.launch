@@ -3,7 +3,7 @@
 
   <node name="cartographer_node" pkg="cartographer_ros"
       type="cartographer_node" args="-start_trajectory_with_default_topics=false
-          -configuration_directory $(find husky_cartographer_navigation)/config
+          -configuration_directory $(find multi_robot_slam)/config
           -configuration_basename decentralised_cartographer.lua"
       output="screen">
   </node>

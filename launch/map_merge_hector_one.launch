@@ -1,0 +1,71 @@
+<launch>
+  <!-- Arguments -->
+  <arg name="robot1" default="Husky1"/>
+  <arg name="robot2" default="Husky2"/>
+
+  <arg name="robot1_x" default="5"/>
+  <arg name="robot1_y" default="5"/>
+  <arg name="robot1_z" default="0.0"/>
+  <arg name="robot1_yaw" default="2.0"/>
+
+  <arg name="robot2_x" default="-5"/>
+  <arg name="robot2_y" default="-5"/>
+  <arg name="robot2_z" default="0.0"/>
+  <arg name="robot2_yaw" default="2.0"/>
+
+  <arg name="robot_count" default="2"/>
+
+  <arg name="current_x" default="$(eval arg('robot' + str(arg('robot_count')) + '_x'))"/>
+  <arg name="current_y" default="$(eval arg('robot' + str(arg('robot_count')) + '_y'))"/>
+  <arg name="current_z" default="$(eval arg('robot' + str(arg('robot_count')) + '_z'))"/>
+  <arg name="current_yaw" default="$(eval arg('robot' + str(arg('robot_count')) + '_yaw'))"/>
+  <arg name="robot_name" default="$(eval arg('robot' + str(arg('robot_count'))))"/>
+  <arg name="robot_map_frame" default="$(arg robot_name)/map"/>  
+
+  <group ns="$(arg robot_name)/map_merge">
+    <param name="init_pose_x" value="$(arg current_x)"/>
+    <param name="init_pose_y" value="$(arg current_y)"/>
+    <param name="init_pose_z" value="$(arg current_z)"/>
+    <param name="init_pose_yaw" value="$(arg current_yaw)"/>
+  </group>
+ 
+  <group ns="$(arg robot_name)">
+    <param name="tf_prefix" value="$(arg robot_name)"/>
+    <include file="$(find multi_robot_slam)/launch/hector.launch">
+      <arg name="use_robot_name" value="$(arg robot_name)"/>
+    </include>
+    <node pkg="tf" type="static_transform_publisher" name="movement1" args="$(arg current_x) $(arg current_y) $(arg current_z) $(arg current_yaw) 0 0 /map /$(arg robot_map_frame) 100" />
+  </group>
+
+  <include file="$(find multi_robot_slam)/launch/map_merge_hector_one.launch" if="$(eval arg('robot_count') - 1 > 0)">
+       <arg name="robot_count" value="$(eval arg('robot_count') - 1)"/>
+  </include>
+
+<!--
+  <group ns="$(arg robot1_name)">
+    <param name="tf_prefix" value="$(arg robot1_name)"/>
+    <include file="$(find multi_robot_slam)/launch/gmapping.launch">
+      <arg name="use_robot_name" value="$(arg robot1_name)"/>
+    </include>    
+  </group>
+
+  <group ns="$(arg robot2_name)">
+    <param name="tf_prefix" value="$(arg robot2_name)"/>
+    <include file="$(find multi_robot_slam)/launch/gmapping.launch">
+      <arg name="use_robot_name" value="$(arg robot2_name)"/>
+    </include>
+  </group> -->
+
+  <node if="$(eval arg('robot_count') == 1)" pkg="multirobot_map_merge" type="map_merge" respawn="false" name="map_merge" output="screen">
+    <param name="robot_map_topic" value="map"/>
+    <param name="robot_namespace" value="Husky"/>
+    <param name="merged_map_topic" value="map_merged"/>
+    <param name="world_frame" value="map"/>
+    <param name="known_init_poses" value="true"/>
+    <param name="merging_rate" value="0.5"/>
+    <param name="discovery_rate" value="0.5"/>
+    <param name="estimation_rate" value="0.1"/>
+    <param name="estimation_confidence" value="1.0"/>
+  </node>
+
+</launch>

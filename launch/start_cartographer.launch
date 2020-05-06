@@ -1,0 +1,16 @@
+<launch>
+	
+	<!-- start node -->
+   <arg name="nr" default="2"/>
+   <group ns="$(eval 'robot_' + str(arg('nr')))">
+      <node pkg="tf" type="static_transform_publisher" name="movement" args="0 0 0 0 0 0 /pose_frame /base_link 100" />
+   </group>
+
+   <!-- recursively start new node -->
+   <include file="$(find multi_robot_slam)/launch/start_cartographer.launch" if="$(eval arg('nr') - 1 > 0)">
+       <arg name="nr" value="$(eval arg('nr') - 1)"/>
+   </include>
+
+   <node if="$(eval arg('nr') == 1)" pkg="tf" type="static_transform_publisher" name="movement" args="0 0 0 0 0 0 /pose_frame /base_link 100" />
+
+</launch>
