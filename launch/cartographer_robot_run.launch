@@ -8,9 +8,8 @@
 
   <node name="cartographer_start_trajectory" pkg="cartographer_ros"
       type="cartographer_start_trajectory" args="
-          -configuration_directory $(find husky_cartographer_navigation)/config
           -configuration_basename decentralised_cartographer.lua
-	  $(arg initial_argument_expanded)"
+	         $(arg initial_argument_expanded)"
       output="screen">
     <!--remap from="scan" to="$(arg robot_name)/laser/scan" /-->
     <remap from="scan" to="$(arg robot_name)/scan" />
