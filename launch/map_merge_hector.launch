@@ -1,18 +1,18 @@
 <launch>
   <!-- Arguments -->
   <arg name="open_rviz" default="true"/>
-  <arg name="robot1_name" default="robot1"/>
-  <arg name="robot2_name" default="robot2"/>
+  <arg name="robot1_name" default="Husky1"/>
+  <arg name="robot2_name" default="Husky2"/>
 
-  <arg name="first_robot_x_pos" default="300.0"/>
-  <arg name="first_robot_y_pos" default="-140.0"/>
+  <arg name="first_robot_x_pos" default="5.0"/>
+  <arg name="first_robot_y_pos" default="5.0"/>
   <arg name="first_robot_z_pos" default="0.0"/>
-  <arg name="first_robot_yaw"   default="0.0"/>
+  <arg name="first_robot_yaw"   default="2.0"/>
 
-  <arg name="second_robot_x_pos" default="-240.0"/>
-  <arg name="second_robot_y_pos" default="160.0"/>
+  <arg name="second_robot_x_pos" default="-5.0"/>
+  <arg name="second_robot_y_pos" default="-5.0"/>
   <arg name="second_robot_z_pos" default="0.0"/>
-  <arg name="second_robot_yaw"   default="0.0"/>
+  <arg name="second_robot_yaw"   default="2.0"/>
 
   <group ns="/$(arg robot1_name)/map_merge">
     <param name="init_pose_x" value="$(arg first_robot_x_pos)"/>
@@ -33,6 +33,7 @@
     <include file="$(find multi_robot_slam)/launch/hector.launch">
       <arg name="use_robot_name" value="$(arg robot1_name)"/>
     </include>
+    <!-- <node pkg="tf" type="static_transform_publisher" name="fake" args="0 0 0 0 0 0 /map $(arg robot1_name)/map 500"/> -->
   </group>
 
   <group ns="$(arg robot2_name)">
@@ -40,6 +41,7 @@
     <include file="$(find multi_robot_slam)/launch/hector.launch">
       <arg name="use_robot_name" value="$(arg robot2_name)"/>
     </include>
+    <!-- <node pkg="tf" type="static_transform_publisher" name="fake" args="0 0 0 0 0 0 /map $(arg robot2_name)/map 500"/> -->
   </group>
 
 <!--
@@ -55,17 +57,17 @@
 
   <node pkg="multirobot_map_merge" type="map_merge" respawn="false" name="map_merge" output="screen">
     <param name="robot_map_topic" value="map"/>
-    <param name="robot_namespace" value="robot"/>
+    <param name="robot_namespace" value="Husky"/>
     <param name="merged_map_topic" value="map"/>
     <param name="world_frame" value="map"/>
-    <param name="known_init_poses" value="false"/>
+    <param name="known_init_poses" value="true"/>
     <param name="merging_rate" value="0.5"/>
     <param name="discovery_rate" value="0.5"/>
     <param name="estimation_rate" value="0.1"/>
     <param name="estimation_confidence" value="1.0"/>
   </node>
 
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find multi_robot_slam)/rviz/map_merge.rviz" output="screen"/>
+  <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find multi_robot_slam)/rviz/map_merge.rviz" output="screen"/> -->
 
   <!--
   <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg robot1_name)_tf_broadcaster" args="50 100 0 0 0 0 /map /$(arg robot1_name)/map 500"/>
